@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using usersApi.Services;
 
 namespace usersApi
 {
@@ -25,6 +26,7 @@ namespace usersApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<UserService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -40,7 +42,11 @@ namespace usersApi
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            try
+            {
+                UserService user = new UserService(Configuration);
+                user.AddAllUsers();
+            }catch(Exception ex) { throw (ex); }
             app.UseHttpsRedirection();
             app.UseMvc();
         }
