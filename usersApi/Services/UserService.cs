@@ -30,6 +30,28 @@ namespace usersApi.Services
         {
             return _users.Find(user => true).ToList();
         }
+
+        public User Get(int id)
+        {
+            return _users.Find<User>(user => user.id == id).FirstOrDefault();
+        }
+
+        public User Create(User user)
+        {
+            _users.InsertOne(user);
+            return user;
+        }
+
+        public void Update(int id, User UpdatedUser)
+        {
+            _users.ReplaceOne(user => user.id == id, UpdatedUser);
+        }
+
+        public void Remove(int id)
+        {
+            _users.DeleteOne(user => user.id == id);
+        }
+
         public List<User> AddAllUsers()
         {
             var client = new RestClient("https://jsonplaceholder.typicode.com/users");
@@ -45,6 +67,7 @@ namespace usersApi.Services
             //return response.Content;
             return _users.Find(user => true).ToList();
         }
+
 
     }
 }

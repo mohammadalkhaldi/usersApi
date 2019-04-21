@@ -26,6 +26,55 @@ namespace usersApi.Controllers
             return _userService.Get();
         }
 
+        [HttpGet("{id:int}", Name = "GetUser")]
+        public ActionResult<User> Get(int id)
+        {
+            var user = _userService.Get(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
+        [HttpPost("addUser")]
+        public ActionResult<User> Create(User user)
+        {
+            _userService.Create(user);
+
+            return CreatedAtRoute("GetUser", new { id = user.id }, user);
+        }
+        [HttpPut("{id:int}")]
+        public IActionResult Update(int id, User updatedUser)
+        {
+            var user = _userService.Get(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _userService.Update(id, updatedUser);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        public IActionResult Delete(int id)
+        {
+            var user = _userService.Get(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _userService.Remove(user.id);
+
+            return NoContent();
+        }
         [HttpGet("AddAllUsers")]
         public ActionResult<List<User>> AddAllUsers()
         {
