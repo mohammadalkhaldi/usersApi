@@ -9,6 +9,9 @@ using RestSharp;
 using Newtonsoft.Json;
 using System.Runtime.Serialization.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
+using MongoDB.Bson;
 
 namespace usersApi.Services
 {
@@ -50,6 +53,31 @@ namespace usersApi.Services
         public void Remove(int id)
         {
             _users.DeleteOne(user => user.id == id);
+        }
+
+        public List<User> Search(IFormCollection data)
+        {
+            StringValues text;
+            FilterDefinition<User> filter = FilterDefinition<User>.Empty;
+            if (data.TryGetValue("name",out text))
+            {
+                filter = filter & new FilterDefinitionBuilder<User>().Eq("name", text.First());
+            }
+            if (data.TryGetValue("username", out text))
+            {
+    
+                filter = filter & new FilterDefinitionBuilder<User>().Eq("username", text.First());
+            }
+            if (data.TryGetValue("zipcode", out text))
+            {       
+                filter = filter & Builders<User>.Filter.Eq(user => user.address.zipcode, text.First());
+            }
+            if (data.TryGetValue("companyName", out text))
+            {
+                filter = filter & Builders<User>.Filter.Eq(user => user.company.name, text.First());
+            }
+
+            return _users.Find(filter).ToList();
         }
 
         public List<User> AddAllUsers()

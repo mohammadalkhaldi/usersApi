@@ -75,6 +75,14 @@ namespace usersApi.Controllers
 
             return NoContent();
         }
+        [HttpPost("searchUser")]
+        public ActionResult<List<User>> Search(IFormCollection data)
+        {
+
+           return _userService.Search(data);
+                  
+        }
+
         [HttpGet("AddAllUsers")]
         public ActionResult<List<User>> AddAllUsers()
         {
